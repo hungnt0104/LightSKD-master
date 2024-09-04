@@ -173,7 +173,7 @@ if __name__ == "__main__":
         train(epoch)
         full_test()
         #single_test()
-        break
+        #break
 
     print("FINISHED! Total time expenditure: {}".format(str(time.time()-cur_time)))
 
