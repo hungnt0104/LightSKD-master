@@ -16,7 +16,7 @@ from utils import output_process,get_model
 
 parser = argparse.ArgumentParser(description="DRG & DSR")
 parser.add_argument("--epoch", default=200, type=int)
-parser.add_argument("--lr_drop_percent", default=0.1, type=float)
+parser.add_argument("--lr_drop_percent", default=0.2, type=float)
 parser.add_argument("--lr_drop_epoch", default=[60,120,160])
 parser.add_argument("--visible_device_single", default=0, type=int, help="if use_parallel=True, this item will not work.")
 parser.add_argument("--visible_device_list", default=[0], type=list, help="if use_parallel=False, this item will not work.")
