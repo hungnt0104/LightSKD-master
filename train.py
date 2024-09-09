@@ -55,8 +55,13 @@ else:
     ada_net = ada_net.to(device)
 
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD([{'params': net.parameters()}, {'params': ada_net.parameters()}],
+if args.datasets == "FER2013":
+    optimizer = optim.AdamW([{'params': net.parameters()}, {'params': ada_net.parameters()}],
+                        lr=0.001, weight_decay=args.weight_decay)
+else:
+    optimizer = optim.SGD([{'params': net.parameters()}, {'params': ada_net.parameters()}],
                         lr=args.initial_lr, momentum=args.momentum, weight_decay=args.weight_decay)
+
 
 load_dir = args.model_path
 load_name = load_dir+str(args.model)+'.pth'
