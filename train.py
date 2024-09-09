@@ -116,7 +116,7 @@ def train(epoch):
         total += targets.size(0)
         correct += predicted.eq(targets.data).sum().float().cpu()
         train_loss += loss.item()
-        if args.DRG:
+        if args.DSR:
             last_output_processed = output_processed
 
         if (batch_idx + 1) % 40 == 0:
