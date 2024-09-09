@@ -15,17 +15,22 @@ from torch.utils.data import DataLoader, BatchSampler, SequentialSampler, Sample
 # from cutout import Cutout
 def get_transforms(isDense):
     if isDense:
+        target_size = 48
+        mean, std = 0.5, 0.5
         transform_train = transforms.Compose([
-            transforms.RandomResizedCrop(224),
+            transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
+            transforms.RandomResizedCrop(target_size, scale=(0.8, 1.2)),
+            transforms.RandomApply([transforms.RandomAffine(0, translate=(0.2, 0.2))], p=0.5),
             transforms.RandomHorizontalFlip(),
+            transforms.RandomApply([transforms.RandomRotation(10)], p=0.5),
             transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))
-        ])
+            transforms.Normalize(mean=mean, std=std)
+        ]),
         transform_test = transforms.Compose([
-           transforms.Resize(256),
-            transforms.CenterCrop(224),
+            transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
+            transforms.Resize((target_size, target_size)),
             transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))
+            transforms.Normalize(mean=mean, std=std)
         ])
         return transform_train,transform_test
     else:
@@ -45,8 +50,13 @@ def get_transforms(isDense):
         return transform_train,transform_test
 
 def get_val_transforms():
+    target_size = 48
+    mean, std = 0.5, 0.5
     transform_val = transforms.Compose([
+        transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
+        transforms.Resize((target_size, target_size)),
         transforms.ToTensor(),
+        transforms.Normalize(mean=mean, std=std)
     ])
     return transform_val
 
@@ -79,6 +89,10 @@ def get_trainloader(params='CIFAR10',isDense=False,bs=128):
     elif params == "CUB":
         trainset = ImageFolder("./datasets/CUB/train",transform=get_transforms(isDense)[0])
 
+    #FER datasets
+    elif params == "FER2013":
+        trainset = ImageFolder("/kaggle/working/org_fer2013/train",transform=get_transforms(isDense)[0])
+
     return DataLoader(trainset,num_workers=4,batch_size=bs,shuffle=True,drop_last=True)
 
 def get_testloader(params='CIFAR10',isDense=False,bs=128):
@@ -107,6 +121,11 @@ def get_testloader(params='CIFAR10',isDense=False,bs=128):
     elif params == "CUB":
         trainset = ImageFolder("./datasets/CUB/val/", transform=get_transforms(isDense)[1])
 
+    #FER datasets
+    elif params == "FER2013":
+        trainset = ImageFolder("/kaggle/working/org_fer2013/test",transform=get_transforms(isDense)[0])
+
+
 
     return DataLoader(trainset,num_workers=4,batch_size=bs,shuffle=True,drop_last=True)
 
@@ -116,6 +135,8 @@ def get_valset(params='TinyImageNet', data_path='./datasets/'):
         return ImageFolder(root=r"./datasets/TinyImageNet/val", transform=get_val_transforms())
     elif params == "standford_dogs":
         return ImageFolder(root=r"./datasets/stanforddogs/val",transform=get_val_transforms())
+    elif params == "FER2013":
+        return ImageFolder(root="/kaggle/working/org_fer2013/test",transform=get_val_transforms())
     data = None
     if params == 'CIFAR10':
         data = CIFAR10
