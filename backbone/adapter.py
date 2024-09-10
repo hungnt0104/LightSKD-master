@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from fgwblock import Block
-from cbam import CBAM
+from backbone.fgwblock import Block
+from backbone.cbam import CBAM
 
 class BasicBlock(nn.Module):
     expansion = 1
