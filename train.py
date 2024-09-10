@@ -91,7 +91,7 @@ def train(epoch):
 
         # learn labels
         outputs,mids = net(inputs)
-        # outputs_d = ada_net(mids[1])
+        outputs_d = ada_net(mids[1])
         
         # train the model
         loss = torch.mean(criterion(outputs, targets))
