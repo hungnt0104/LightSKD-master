@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from cbam import CBAM
+from backbone.cbam import CBAM
 
 def conv3x3(in_channels, out_channels, kernel_size=3, stride=1, padding=1):
     return nn.Sequential(
