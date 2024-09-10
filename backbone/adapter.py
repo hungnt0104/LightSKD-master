@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from fgwblock import Block
+from cbam import CBAM
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -73,41 +75,23 @@ class SepConv(nn.Module):
         return self.op(x)
 
 class Istr_2(nn.Module):
-    def __init__(self, block, num_classes=120):
+    def __init__(self, block, num_classes=7):
         super(Istr_2, self).__init__()
-        self.attention2 = nn.Sequential(
-            SepConv(
-                channel_in=128 * block.expansion,
-                channel_out=128 * block.expansion
-            ),
-            nn.BatchNorm2d(128 * block.expansion),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2, mode='bilinear',align_corners=True),
-            nn.Sigmoid()
-        )
-
-        self.scala2 = nn.Sequential(
-            SepConv(
-                channel_in=128 * block.expansion,
-                channel_out=256 * block.expansion,
-            ),
-            SepConv(
-                channel_in=256 * block.expansion,
-                channel_out=512 * block.expansion,
-            ),
-            nn.AdaptiveAvgPool2d((1,1))
-        )
-
+        self.expans = block.expansion
+        self.cbam2 = CBAM(128 * block.expansion, 128 * block.expansion)
+        self.block2_fgw = nn.Sequential(Block(128*self.expans, 256*self.expans), Block(256*self.expans, 512*self.expans, keep_dim=False))
+        # self.block3_fgw = nn.Sequential(Block(256*self.expans, 512*self.expans, keep_dim=False))
+        self.avgp = nn.AdaptiveAvgPool2d((1, 1))
         self.fc2 = nn.Linear(512 * block.expansion, num_classes)
 
     def forward(self,x):
         #print(x.size())
-        fea2 = self.attention2(x)
-        fea2 = fea2 * x
-        out2_feature = self.scala2(fea2).view(x.size(0), -1)
-        #print(out2_feature.size())
-        out2 = self.fc2(out2_feature)
-
+        fea2 = self.cbam2(x)
+        fea2 = self.block2_fgw(fea2)
+        fea2 = self.avgp(fea2)
+        fea2 = fea2.view((fea2.shape[0], -1))
+        out2 = self.fc2(fea2)
+        
         return out2
 
 class Istr_1(nn.Module):
@@ -186,7 +170,7 @@ class Istr_3(nn.Module):
 def adapter_1(num_classes=100):
     return Istr_1(BasicBlock,num_classes)
 
-def adapter_2(num_classes=100):
+def adapter_2(num_classes=7):
     return Istr_2(Bottleneck,num_classes)
 
 def adapter_3(num_classes=100):
