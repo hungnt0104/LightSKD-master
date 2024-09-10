@@ -25,7 +25,7 @@ def get_transforms(isDense):
             transforms.RandomApply([transforms.RandomRotation(10)], p=0.5),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std)
-        ]),
+        ])
         transform_test = transforms.Compose([
             transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
             transforms.Resize((target_size, target_size)),
