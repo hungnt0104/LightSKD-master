@@ -152,7 +152,8 @@ def get_valset(params='TinyImageNet', data_path='./datasets/'):
     return data(data_path, train=False, download=True, transform=get_val_transforms())
 
 def get_single_val_loader():
-    single_data = ImageFolder(root=r"./datasets/single_val",transform=get_val_transforms())
+    # single_data = ImageFolder(root=r"./datasets/single_val",transform=get_val_transforms())
+    single_data = ImageFolder(root="/kaggle/working/org_fer2013/val",transform=get_val_transforms())
     return DataLoader(single_data, num_workers=0, batch_size=1)
 
 def single_test(net):
