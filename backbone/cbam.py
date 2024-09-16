@@ -38,6 +38,7 @@ class CAM(nn.Module):
         for pool_type in self.pool_types:
             if pool_type == 'avg':
                 avg_pool = F.avg_pool2d(x, (x.size(2), x.size(3)), stride=(x.size(2), x.size(3)))  # (b x c x 1 x 1)
+                print(avg_pool.shape)
                 channel_att_raw = self.mlp(avg_pool) # (b x c)
             elif pool_type == 'max':
                 max_pool = F.max_pool2d(x, (x.size(2), x.size(3)), stride=(x.size(2), x.size(3))) # (b x c x 1 x 1)
