@@ -83,6 +83,7 @@ def train(epoch):
     net.train()
     train_loss = 0
     correct = 0
+    correct_branch = 0
     total = 0
     train_i_loss = 0
     train_r_loss = 0 
