@@ -147,17 +147,24 @@ def full_test():
     total = 0
     all_targets = []
     all_predictions = []
+    all_predictions_branch = []
     
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            outputs, _ = net(inputs)
+            outputs, mids = net(inputs)
+            outputs_branch = ada_net(mids[1])
+            
             _, predicted = torch.max(outputs, 1)
+            _, predicted_branch = torch.max(outputs_branch, 1)
 
             all_targets.extend(targets.cpu().numpy())
             all_predictions.extend(predicted.cpu().numpy())
+            all_predictions_branch.extend(predicted_branch.cpu().numpy())
             
             correct += predicted.eq(targets).sum().item()
+            correct_branch += predicted_branch.eq(targets).sum().item()
+            
             test_loss += criterion(outputs, targets).item()
             total += targets.size(0)
 
@@ -166,8 +173,10 @@ def full_test():
     print("Confusion Matrix:\n", cm)
 
     print(len(testloader),
-          'Total Loss: %.3f | Average Accuracy: %.3f%% (%d/%d)'
-          % (test_loss / (batch_idx + 1), 100. * correct / total, correct, total))
+          'Total Loss: %.3f | Deepest Accuracy: %.3f%% (%d/%d) | Shallow Accuracy: %.3f%% (%d/%d)'
+          % (test_loss / (batch_idx + 1),
+             100. * correct / total, correct, total,
+             100. * correct_branch / total, correct_branch, total))
 
 def single_test():
     net.eval()
