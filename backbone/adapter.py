@@ -85,9 +85,9 @@ class Istr_2(nn.Module):
         self.fc2 = nn.Linear(512 * block.expansion, num_classes)
 
     def forward(self,x):
-        print(x.size())
+        # print(x.size())
         fea2 = self.cbam2(x)
-        print("oke1")
+        # print("oke1")
         fea2 = self.block2_fgw(fea2)
         fea2 = self.avgp(fea2)
         fea2 = fea2.view((fea2.shape[0], -1))
@@ -172,7 +172,7 @@ def adapter_1(num_classes=100):
     return Istr_1(BasicBlock,num_classes)
 
 def adapter_2(num_classes=7):
-    return Istr_2(Bottleneck,num_classes)
+    return Istr_2(BasicBlock,num_classes)
 
 def adapter_3(num_classes=100):
     return Istr_3(BasicBlock,num_classes)
