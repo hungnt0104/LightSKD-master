@@ -11,6 +11,7 @@ from backbone.adapter import adapter_2
 from backbone.mobilenetv2 import *
 import torch.nn.functional as F
 import argparse
+from sklearn.metrics import confusion_matrix
 from utils import output_process,get_model
 
 
@@ -144,19 +145,29 @@ def full_test():
     test_loss = 0
     correct = 0
     total = 0
+    all_targets = []
+    all_predictions = []
+    
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            outputs,_ = net(inputs)
-            correct += outputs.max(1)[1].eq(targets).sum()
-            test_loss += torch.mean(criterion(outputs, targets))
-            total += outputs.size(0)
+            outputs, _ = net(inputs)
+            _, predicted = torch.max(outputs, 1)
 
-        print(len(testloader),
-              'Total Loss: %.3f | Average Accuracy: %.3f%% (%d/%d)'
-              % (test_loss / (batch_idx + 1), 100. * correct / total, correct, total))
-        #f.close()
-        #f.write(str(correct/total*100.)+'\n')
+            all_targets.extend(targets.cpu().numpy())
+            all_predictions.extend(predicted.cpu().numpy())
+            
+            correct += predicted.eq(targets).sum().item()
+            test_loss += criterion(outputs, targets).item()
+            total += targets.size(0)
+
+    # Calculate confusion matrix
+    cm = confusion_matrix(all_targets, all_predictions)
+    print("Confusion Matrix:\n", cm)
+
+    print(len(testloader),
+          'Total Loss: %.3f | Average Accuracy: %.3f%% (%d/%d)'
+          % (test_loss / (batch_idx + 1), 100. * correct / total, correct, total))
 
 def single_test():
     net.eval()
