@@ -56,7 +56,7 @@ else:
     ada_net = ada_net.to(device)
 
 criterion = nn.CrossEntropyLoss()
-if args.datasets == "FER2013":
+if args.datasets == "FER2013" or args.datasets == "FERPlus":
     optimizer = optim.AdamW([{'params': net.parameters()}, {'params': ada_net.parameters()}],
                         lr=0.001, weight_decay=args.weight_decay)
 else:
