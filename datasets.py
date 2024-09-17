@@ -25,7 +25,7 @@ def get_transforms(isDense):
             transforms.RandomApply([transforms.RandomRotation(10)], p=0.5),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std)
-        ])
+        ]),
         transform_test = transforms.Compose([
             transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
             transforms.Resize((target_size, target_size)),
@@ -92,6 +92,8 @@ def get_trainloader(params='CIFAR10',isDense=False,bs=128):
     #FER datasets
     elif params == "FER2013":
         trainset = ImageFolder("/kaggle/working/org_fer2013/train",transform=get_transforms(isDense)[0])
+    elif params == "FERPlus":
+        trainset = ImageFolder("/kaggle/working/fer_plus/train",transform=get_transforms(isDense)[0])
 
     return DataLoader(trainset,num_workers=4,batch_size=bs,shuffle=True,drop_last=True)
 
@@ -124,6 +126,8 @@ def get_testloader(params='CIFAR10',isDense=False,bs=128):
     #FER datasets
     elif params == "FER2013":
         trainset = ImageFolder("/kaggle/working/org_fer2013/test",transform=get_transforms(isDense)[0])
+    elif params == "FERPlus":
+        trainset = ImageFolder("/kaggle/working/fer_plus/test",transform=get_transforms(isDense)[0])
 
 
 
@@ -136,7 +140,9 @@ def get_valset(params='TinyImageNet', data_path='./datasets/'):
     elif params == "standford_dogs":
         return ImageFolder(root=r"./datasets/stanforddogs/val",transform=get_val_transforms())
     elif params == "FER2013":
-        return ImageFolder(root="/kaggle/working/org_fer2013/test",transform=get_val_transforms())
+        return ImageFolder(root="/kaggle/working/org_fer2013/val",transform=get_val_transforms())
+    elif params == "FERPlus":
+        return ImageFolder(root="/kaggle/working/fer_plus/val",transform=get_val_transforms())
     data = None
     if params == 'CIFAR10':
         data = CIFAR10
@@ -152,8 +158,7 @@ def get_valset(params='TinyImageNet', data_path='./datasets/'):
     return data(data_path, train=False, download=True, transform=get_val_transforms())
 
 def get_single_val_loader():
-    # single_data = ImageFolder(root=r"./datasets/single_val",transform=get_val_transforms())
-    single_data = ImageFolder(root="/kaggle/working/org_fer2013/val",transform=get_val_transforms())
+    single_data = ImageFolder(root=r"./datasets/single_val",transform=get_val_transforms())
     return DataLoader(single_data, num_workers=0, batch_size=1)
 
 def single_test(net):
@@ -269,5 +274,3 @@ if __name__ == '__main__':
     #     plt.imshow(inputs.permute(1,2,0).cpu().numpy())
     #     plt.savefig("./i.png")
     #     plt.show()
-
-
