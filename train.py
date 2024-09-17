@@ -42,7 +42,7 @@ print(args)
 cur_time = time.time()
 trainloader = tl(params=args.datasets,isDense=args.large_trans,bs=args.batch_size)
 testloader = tel(params=args.datasets,isDense=args.large_trans,bs=args.batch_size)
-svloader = svl()
+# svloader = svl()
 
 device = torch.device("cuda:"+str(args.visible_device_single) if torch.cuda.is_available() else "cpu")
 
