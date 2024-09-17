@@ -180,17 +180,17 @@ def full_test():
              100. * correct / total, correct, total,
              100. * correct_branch / total, correct_branch, total))
 
-def single_test():
-    net.eval()
-    f = open("./logs/single-logs.txt", "w")
-    with torch.no_grad():
-        for batch_idx, (inputs, _) in enumerate(svloader):
-            inputs = inputs.to(device)
-            outputs,_ = net(inputs)
-            f.write(str(outputs[0]))
-            f.write("\n")
-        print("single test finished.")
-        f.close()
+# def single_test():
+#     net.eval()
+#     f = open("./logs/single-logs.txt", "w")
+#     with torch.no_grad():
+#         for batch_idx, (inputs, _) in enumerate(svloader):
+#             inputs = inputs.to(device)
+#             outputs,_ = net(inputs)
+#             f.write(str(outputs[0]))
+#             f.write("\n")
+#         print("single test finished.")
+#         f.close()
 
 if __name__ == "__main__":
     for epoch in range(args.epoch):
