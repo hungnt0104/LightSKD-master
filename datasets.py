@@ -92,6 +92,8 @@ def get_trainloader(params='CIFAR10',isDense=False,bs=128):
     #FER datasets
     elif params == "FER2013":
         trainset = ImageFolder("/kaggle/working/org_fer2013/train",transform=get_transforms(isDense)[0])
+    elif params == "FERPlus":
+        trainset = ImageFolder("/kaggle/working/fer_plus/train",transform=get_transforms(isDense)[0])
 
     return DataLoader(trainset,num_workers=4,batch_size=bs,shuffle=True,drop_last=True)
 
@@ -124,6 +126,8 @@ def get_testloader(params='CIFAR10',isDense=False,bs=128):
     #FER datasets
     elif params == "FER2013":
         trainset = ImageFolder("/kaggle/working/org_fer2013/test",transform=get_transforms(isDense)[0])
+    elif params == "FERPlus":
+        trainset = ImageFolder("/kaggle/working/fer_plus/test",transform=get_transforms(isDense)[0])
 
 
 
@@ -136,7 +140,9 @@ def get_valset(params='TinyImageNet', data_path='./datasets/'):
     elif params == "standford_dogs":
         return ImageFolder(root=r"./datasets/stanforddogs/val",transform=get_val_transforms())
     elif params == "FER2013":
-        return ImageFolder(root="/kaggle/working/org_fer2013/test",transform=get_val_transforms())
+        return ImageFolder(root="/kaggle/working/org_fer2013/val",transform=get_val_transforms())
+    elif params == "FERPlus":
+        return ImageFolder(root="/kaggle/working/fer_plus/val",transform=get_val_transforms())
     data = None
     if params == 'CIFAR10':
         data = CIFAR10
