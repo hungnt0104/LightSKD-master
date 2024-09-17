@@ -140,9 +140,9 @@ def get_valset(params='TinyImageNet', data_path='./datasets/'):
     elif params == "standford_dogs":
         return ImageFolder(root=r"./datasets/stanforddogs/val",transform=get_val_transforms())
     elif params == "FER2013":
-        return ImageFolder(root="/kaggle/working/org_fer2013/val",transform=get_val_transforms())
+        return ImageFolder(root="/kaggle/working/org_fer2013/test",transform=get_val_transforms())
     elif params == "FERPlus":
-        return ImageFolder(root="/kaggle/working/fer_plus/val",transform=get_val_transforms())
+        return ImageFolder(root="/kaggle/working/fer_plus/test",transform=get_val_transforms())
     data = None
     if params == 'CIFAR10':
         data = CIFAR10
