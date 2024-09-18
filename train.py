@@ -21,21 +21,65 @@ parser.add_argument("--lr_drop_epoch", default=[60,120,160])
 parser.add_argument("--visible_device_single", default=0, type=int, help="if use_parallel=True, this item will not work.")
 parser.add_argument("--visible_device_list", default=[0], type=list, help="if use_parallel=False, this item will not work.")
 parser.add_argument("--use_parallel", default=False)
-parser.add_argument("--datasets", default='CIFAR100', type=str)
-parser.add_argument("--num_classes", default=100, type=int)
+parser.add_argument("--datasets", default='FER2013', type=str)
+parser.add_argument("--num_classes", default=7, type=int)
 parser.add_argument("--temperature", default=4.0, type=float)
 parser.add_argument("--batch_size", default=128, type=int)
 parser.add_argument("--alpha", default=0.2, help="RG-Loss")
 parser.add_argument("--beta", default=1, help="SW-Loss")
-parser.add_argument("--large_trans", default=False)
-parser.add_argument("--model", default='ResNet18')
+parser.add_argument("--large_trans", default=True)
+parser.add_argument("--model", default='ResNet50')
 parser.add_argument("--model_path", default="./save/")
-parser.add_argument("--initial_lr", default=0.1, type=float)
+parser.add_argument("--initial_lr", default=0.001, type=float)
 parser.add_argument("--momentum", default=0.9, type=float)
 parser.add_argument("--weight_decay", default=5e-4, type=float)
 parser.add_argument("--DRG", default=False)
 parser.add_argument("--DSR", default=True)
+parser.add_argument("--pretrained", default=True)
 args = parser.parse_args()
+
+def download_pretrained_weights():
+    # Google Drive file ID
+    drive_url = "https://drive.google.com/uc?id=1_ig22lgZCMpHdlP2B18RbIAhtGVI6yen"
+    
+    # Define the output file path where the model will be saved
+    output = "./pretrained/resnet50_scratch_weight.pkl"
+    
+    # Create the directory if it doesn't exist
+    os.makedirs(os.path.dirname(output), exist_ok=True)
+
+    # Check if the file already exists to avoid redundant downloads
+    if not os.path.exists(output):
+        # Download the file from Google Drive
+        gdown.download(drive_url, output, quiet=False)
+        print(f"Pretrained weights downloaded to {output}")
+    else:
+        print(f"File already exists at {output}")
+
+
+if args.pretrained:
+    download_pretrained_weights()
+    pretrained_weights_path = "./pretrained/resnet50_scratch_weight.pkl"
+    print(f"Loading pretrained weights from {pretrained_weights_path}")
+
+    # Load the state dict using pickle
+    with open(pretrained_weights_path, 'rb') as f:
+        state_dict = pickle.load(f)
+    # Convert numpy arrays to torch tensors in state_dict
+    for key in state_dict.keys():
+        if isinstance(state_dict[key], np.ndarray):
+            state_dict[key] = torch.from_numpy(state_dict[key])
+
+    net = get_model(args)
+    
+    # Load the state dict into the model
+    net.load_state_dict(state_dict)
+    net.fc = nn.Linear(net.fc.in_features, 10)
+
+else:
+    net = get_model(args)
+
+
 print(args)
 
 cur_time = time.time()
@@ -71,8 +115,6 @@ if os.path.isfile(load_name):
     checkpoint = torch.load(load_name)
     net.load_state_dict(checkpoint['net'])
     ada_net.load_state_dict(checkpoint['net_d'])
-
-
 
 bs = args.batch_size
 
