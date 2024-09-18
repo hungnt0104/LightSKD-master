@@ -18,7 +18,7 @@ def get_model(args):
     if args.model == "ResNet18":
         return ResNet18(num_class=args.num_classes)
     elif args.model == "ResNet50":
-        return ResNet50(num_class=args.num_classes)
+        return ResNet50(num_class=8631, include_top=False)
     elif args.model == "ResNet101":
         return ResNet101(num_class=args.num_classes)
     elif args.model == "ResNext":
