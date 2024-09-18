@@ -157,22 +157,22 @@ def get_valset(params='TinyImageNet', data_path='./datasets/'):
         raise NameError('validation on this datasets has not been implemented')
     return data(data_path, train=False, download=True, transform=get_val_transforms())
 
-def get_single_val_loader():
-    single_data = ImageFolder(root=r"./datasets/single_val",transform=get_val_transforms())
-    return DataLoader(single_data, num_workers=0, batch_size=1)
+# def get_single_val_loader():
+#     single_data = ImageFolder(root=r"./datasets/single_val",transform=get_val_transforms())
+#     return DataLoader(single_data, num_workers=0, batch_size=1)
 
-def single_test(net):
-    net.eval()
-    # f = open("./logs/single-logs.txt", "w")
-    with torch.no_grad():
-        for batch_idx, (inputs, _) in enumerate(get_single_val_loader()):
-            inputs = inputs.to("cpu")
-            outputs,_ = net(inputs)
-            # f.write(str(outputs[0])[7:-1])
-            # f.write("\n")
-            return outputs.numpy().tolist()[0]
-        # print("single test finished.")
-        # f.close()
+# def single_test(net):
+#     net.eval()
+#     # f = open("./logs/single-logs.txt", "w")
+#     with torch.no_grad():
+#         for batch_idx, (inputs, _) in enumerate(get_single_val_loader()):
+#             inputs = inputs.to("cpu")
+#             outputs,_ = net(inputs)
+#             # f.write(str(outputs[0])[7:-1])
+#             # f.write("\n")
+#             return outputs.numpy().tolist()[0]
+#         # print("single test finished.")
+#         # f.close()
 
 def get_model():
     return ResNet18(200)
@@ -182,16 +182,16 @@ if __name__ == '__main__':
     net = get_model()
     checkpoint = torch.load("./save/samB.pth",map_location="cpu")
     net.load_state_dict(checkpoint['net'])
-    n1 = single_test(net)
+    # n1 = single_test(net)
 
 
     checkpoint = torch.load("./save/samA.pth",map_location="cpu")
     net.load_state_dict(checkpoint['net'])
-    n2 = single_test(net)
+    # n2 = single_test(net)
 
     checkpoint = torch.load("./save/sam1.pth",map_location="cpu")
     net.load_state_dict(checkpoint['net'])
-    n3 = single_test(net)
+    # n3 = single_test(net)
 
 
     checkpoint = torch.load("./save/sam2.pth",map_location="cpu")
