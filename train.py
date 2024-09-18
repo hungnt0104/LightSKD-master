@@ -7,7 +7,7 @@ import torch
 torch.set_printoptions(threshold=np.inf)
 from torch.nn import DataParallel
 from torch import nn, optim
-from datasets import get_trainloader as tl, get_testloader as tel, get_single_val_loader as svl
+from datasets import get_trainloader as tl, get_testloader as tel
 from backbone.adapter import adapter_2
 from backbone.mobilenetv2 import *
 import torch.nn.functional as F
@@ -86,7 +86,7 @@ print(args)
 cur_time = time.time()
 trainloader = tl(params=args.datasets,isDense=args.large_trans,bs=args.batch_size)
 testloader = tel(params=args.datasets,isDense=args.large_trans,bs=args.batch_size)
-svloader = svl()
+# svloader = svl()
 
 device = torch.device("cuda:"+str(args.visible_device_single) if torch.cuda.is_available() else "cpu")
 
@@ -202,17 +202,17 @@ def full_test():
         #f.close()
         #f.write(str(correct/total*100.)+'\n')
 
-def single_test():
-    net.eval()
-    f = open("./logs/single-logs.txt", "w")
-    with torch.no_grad():
-        for batch_idx, (inputs, _) in enumerate(svloader):
-            inputs = inputs.to(device)
-            outputs,_ = net(inputs)
-            f.write(str(outputs[0]))
-            f.write("\n")
-        print("single test finished.")
-        f.close()
+# def single_test():
+#     net.eval()
+#     f = open("./logs/single-logs.txt", "w")
+#     with torch.no_grad():
+#         for batch_idx, (inputs, _) in enumerate(svloader):
+#             inputs = inputs.to(device)
+#             outputs,_ = net(inputs)
+#             f.write(str(outputs[0]))
+#             f.write("\n")
+#         print("single test finished.")
+#         f.close()
 
 if __name__ == "__main__":
     for epoch in range(args.epoch):
