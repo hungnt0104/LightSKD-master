@@ -18,7 +18,7 @@ def get_transforms(isDense):
         target_size = 48
         mean, std = 0.5, 0.5
         transform_train = transforms.Compose([
-            transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
+            # transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
             transforms.RandomResizedCrop(target_size, scale=(0.8, 1.2)),
             transforms.RandomApply([transforms.RandomAffine(0, translate=(0.2, 0.2))], p=0.5),
             transforms.RandomHorizontalFlip(),
@@ -27,7 +27,7 @@ def get_transforms(isDense):
             transforms.Normalize(mean=mean, std=std)
         ])
         transform_test = transforms.Compose([
-            transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
+            # transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
             transforms.Resize((target_size, target_size)),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std)
@@ -53,7 +53,7 @@ def get_val_transforms():
     target_size = 48
     mean, std = 0.5, 0.5
     transform_val = transforms.Compose([
-        transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
+        # transforms.Grayscale(num_output_channels=1),  # Convert to grayscale
         transforms.Resize((target_size, target_size)),
         transforms.ToTensor(),
         transforms.Normalize(mean=mean, std=std)
